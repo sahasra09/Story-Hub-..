@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View,FlatList } from 'react-native';
+import { Text, View,FlatList,TouchableOpacity,StyleSheet } from 'react-native';
 import {SearchBar} from 'react-native-elements'
 
 export default class Searchscreen extends React.Component {
@@ -8,6 +8,7 @@ export default class Searchscreen extends React.Component {
     this.state={
       lastVisibleTransaction: null,
       allTransactions: [],
+      search:''
     }
     
   }
@@ -16,14 +17,17 @@ export default class Searchscreen extends React.Component {
     var enteredText = text.split("")
 
     
-   
+    if (enteredText[0].toUpperCase() ==='S'){
     const query = await db.collection("SaveStory").where('story','==',text).startAfter(this.state.lastVisibleTransaction).limit(10).get()
     query.docs.map((doc)=>{
       this.setState({
         allTransactions: [...this.state.allTransactions, doc.data()],
         lastVisibleTransaction: doc
       })
+    
     })
+    }
+    }
     searchTransactions= async(text) =>{
       var enteredText = text.split("")  
       if (enteredText[0].toUpperCase() ==='S'){
@@ -35,15 +39,7 @@ export default class Searchscreen extends React.Component {
           })
         })
       }
-      else if(enteredText[0].toUpperCase() === 'S'){
-        const transaction = await db.collection('transactions').where('studentId','==',text).get()
-        transaction.docs.map((doc)=>{
-          this.setState({
-            allTransactions:[...this.state.allTransactions,doc.data()],
-            lastVisibleTransaction: doc
-          })
-        })
-      }
+      
     }
 
     
@@ -56,7 +52,7 @@ export default class Searchscreen extends React.Component {
         })
       })
     }
-    }
+    
     render() {
       return (
         <View>
@@ -64,7 +60,7 @@ export default class Searchscreen extends React.Component {
           <SearchBar
         placeholder="Type Here..."
         onChangeText={(text)=>{this.setState({search:text})}}
-        value={search}
+        value={this.state.search}
       />
       <TouchableOpacity
             style = {styles.searchButton}
@@ -76,9 +72,9 @@ export default class Searchscreen extends React.Component {
           data={this.state.allTransactions}
           renderItem={({item})=>(
             <View style={{borderBottomWidth: 2}}>
-              <Text>{"Title " + item.bookId}</Text>
-              <Text>{"Author: " + item.studentId}</Text>
-              <Text>{"Author: " + item.transactionType}</Text>
+              <Text>{"Title " + item.title}</Text>
+              <Text>{"Story: " + item.story}</Text>
+              <Text>{"Author: " + item.author}</Text>
             </View>
           )}
           keyExtractor= {(item, index)=> index.toString()}
@@ -90,3 +86,32 @@ export default class Searchscreen extends React.Component {
       );
     }
   }
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      marginTop: 20
+    },
+    searchBar:{
+      flexDirection:'row',
+      height:40,
+      width:'auto',
+      borderWidth:0.5,
+      alignItems:'center',
+      backgroundColor:'grey',
+  
+    },
+    bar:{
+      borderWidth:2,
+      height:30,
+      width:300,
+      paddingLeft:10,
+    },
+    searchButton:{
+      borderWidth:1,
+      height:30,
+      width:50,
+      alignItems:'center',
+      justifyContent:'center',
+      backgroundColor:'green'
+    }
+  })

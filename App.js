@@ -1,7 +1,9 @@
 import React from "react";
 import { StyleSheet, Text, View ,Image} from "react-native";
-import { createAppContainer } from "react-navigation";
+
+import { createSwitchNavigator,createAppContainer } from "react-navigation";
 import { createBottomTabNavigator } from "react-navigation-tabs";
+import LoginScreen from './screens/LoginScreen'
 
 import Writeastory from "./screens/Writeastory";
 import SearchScreen from "./screens/SearchScreen";
@@ -40,7 +42,11 @@ const TabNavigator = createBottomTabNavigator({
   })
 });
 
-const AppContainer = createAppContainer(TabNavigator);
+const switchNavigator=createSwitchNavigator({
+  LoginScreen:{screen:LoginScreen},
+  TabNavigator:{screen:TabNavigator}
+})
+const AppContainer = createAppContainer(switchNavigator);
 
 const styles = StyleSheet.create({
   container: {
@@ -50,3 +56,4 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   }
 });
+
